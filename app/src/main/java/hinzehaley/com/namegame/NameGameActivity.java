@@ -169,6 +169,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
 
         if(activeProfiles.size() == 0){
             gameOver();
+            return;
         }
 
         List<String> keysAsArray = new ArrayList<String>(activeProfiles.keySet());
