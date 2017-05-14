@@ -35,9 +35,9 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
 
     RecyclerView recyclerViewFaces;
     VolleyPersonRequester volleyPersonRequester;
-    Profiles profiles;
-    HashMap<String, Items> activeProfiles = new HashMap<String, Items>();
-    Items[] curProfiles = new Items[Constants.NUM_FACES];
+    static Profiles profiles;
+    static HashMap<String, Items> activeProfiles = new HashMap<String, Items>();
+    static Items[] curProfiles = new Items[Constants.NUM_FACES];
     RecyclerViewImageAdapter adapterFaces;
     ProgressDialog mProgressDialog;
 
@@ -45,9 +45,9 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
     TextView tvName;
     Button btnReset;
 
-    int numCorrect = 0;
-    int numTotal = 0;
-    Items curProfile;
+    static int numCorrect = 0;
+    static int numTotal = 0;
+    static Items curProfile;
 
 
     @Override
@@ -163,6 +163,8 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
      */
     private void askQuestion(){
 
+        Log.i("HASHMAP", "size is: " + activeProfiles.size());
+
         if(activeProfiles.size() == 0){
             gameOver();
         }
@@ -252,5 +254,32 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
     private void showSnackbar(String message){
         Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT)
                 .show();
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+//onRestoreInstanceState
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        updateView();
+        super.onRestoreInstanceState(savedInstanceState);
+
+
+    }
+
+    private void updateView(){
+        adapterFaces.updateProfiles(curProfiles);
+        updateScore();
+        if(curProfile != null) {
+            tvName.setText(curProfile.getFirstName() + " " + curProfile.getLastName());
+        }
     }
 }

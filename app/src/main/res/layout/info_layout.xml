@@ -9,7 +9,7 @@
         android:id="@+id/txt_score"
         android:textSize="20sp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
+        android:layout_centerHorizontal="true"
         android:text="@string/score"
         android:textColor="@color/colorAccent"
         android:padding="5dp"

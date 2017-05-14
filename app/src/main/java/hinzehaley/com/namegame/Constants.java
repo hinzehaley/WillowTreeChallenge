@@ -7,4 +7,7 @@ package hinzehaley.com.namegame;
 public class Constants {
 
     public static final int NUM_FACES = 6;
+    public static final String NUM_CORRECT = "numCorrect";
+    public static final String NUM_TOTAL = "numTotal";
+
 }
