@@ -31,7 +31,7 @@ import models.VolleyPersonRequester;
 import models.profiles.Items;
 import models.profiles.Profiles;
 
-public class NameGameActivity extends AppCompatActivity implements PeopleRetrievedListener, PersonClickedListener{
+public class NameGameActivity extends AppCompatActivity implements PeopleRetrievedListener, PersonClickedListener {
 
     RecyclerView recyclerViewFaces;
     VolleyPersonRequester volleyPersonRequester;
@@ -61,7 +61,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         setUpRecyclerview();
     }
 
-    private void setupViewItems(){
+    private void setupViewItems() {
         tvScore = (TextView) findViewById(R.id.txt_score);
         tvName = (TextView) findViewById(R.id.txt_name);
         btnReset = (Button) findViewById(R.id.btn_restart);
@@ -78,7 +78,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         });
     }
 
-    private void restartGame(){
+    private void restartGame() {
         numCorrect = 0;
         numTotal = 0;
         initializeActiveProfiles();
@@ -90,17 +90,17 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
      * Initializes adapterFaces and Sets up recyclerView with no faces initially
      * With a horizontal scroll if in portraid mode, vertical scroll in landscape mode
      */
-    private void setUpRecyclerview(){
-        if(recyclerViewFaces == null) {
+    private void setUpRecyclerview() {
+        if (recyclerViewFaces == null) {
             recyclerViewFaces = (RecyclerView) findViewById(R.id.recycler_faces);
         }
 
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true);
             //start at leftmost position
             llm.setStackFromEnd(true);
             recyclerViewFaces.setLayoutManager(llm);
-        }else{
+        } else {
             LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
             //start at top
             llm.setStackFromEnd(true);
@@ -117,14 +117,14 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
      * If connected, shows a progress dialog and requests profiles using volleyPersonRequester.
      * If not connected, shows a dialog to request that the user connects
      */
-    private void requestProfiles(){
-        if(volleyPersonRequester == null){
+    private void requestProfiles() {
+        if (volleyPersonRequester == null) {
             volleyPersonRequester = VolleyPersonRequester.getInstance();
         }
-        if(networkConnected()) {
+        if (networkConnected()) {
             DialogManager.showProgressDialog(this);
             volleyPersonRequester.requestPeople(this, this);
-        }else{
+        } else {
             DialogManager.showNetworkNotConnectedDialog(this);
         }
     }
@@ -132,6 +132,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
     /**
      * Callback method from volleyPersonRequester when profiles are retrieved
      * successfully
+     *
      * @param profiles
      */
     @Override
@@ -143,13 +144,13 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         askQuestion();
     }
 
-    private void initializeActiveProfiles(){
-        for(int i = 0; i<profiles.getItems().length; i++){
+    private void initializeActiveProfiles() {
+        for (int i = 0; i < profiles.getItems().length; i++) {
             activeProfiles.put(profiles.getItems()[i].getId(), profiles.getItems()[i]);
         }
     }
 
-    private void gameOver(){
+    private void gameOver() {
         DialogManager.showGameOverDialog(getString(R.string.score) + numCorrect + "/" + numTotal, this, new DialogButtonClickListener() {
             @Override
             public void buttonClicked() {
@@ -161,13 +162,13 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
     /**
      * Asks a new question by presenting a name and six faces
      */
-    private void askQuestion(){
+    private void askQuestion() {
         //go to start of recyclerView
-        recyclerViewFaces.scrollToPosition(adapterFaces.getItemCount()-1);
+        recyclerViewFaces.scrollToPosition(adapterFaces.getItemCount() - 1);
 
         Log.i("HASHMAP", "size is: " + activeProfiles.size());
 
-        if(activeProfiles.size() == 0){
+        if (activeProfiles.size() == 0) {
             gameOver();
             return;
         }
@@ -179,10 +180,10 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
 
         int randIndex = random.nextInt(Constants.NUM_FACES);
 
-        for(int i = 0; i<Constants.NUM_FACES; i++){
-            if(i == randIndex){
+        for (int i = 0; i < Constants.NUM_FACES; i++) {
+            if (i == randIndex) {
                 curProfiles[i] = curProfile;
-            }else{
+            } else {
                 rand = random.nextInt(keysAsArray.size());
                 curProfiles[i] = activeProfiles.get(keysAsArray.get(rand));
             }
@@ -193,6 +194,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
 
     /**
      * Callback from volleyPersonRequester if unable to retrieve profiles
+     *
      * @param error
      */
     @Override
@@ -202,9 +204,9 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
     }
 
 
-
     /**
      * Checks for a network connection
+     *
      * @return true if connected, otherwise false
      */
     private boolean networkConnected() {
@@ -219,12 +221,12 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
     @Override
     protected void onResume() {
         super.onResume();
-        if(profiles == null) {
+        if (profiles == null) {
             requestProfiles();
         }
     }
 
-    private void correctChoice(){
+    private void correctChoice() {
         activeProfiles.remove(curProfile.getId());
         numCorrect++;
         numTotal++;
@@ -233,28 +235,28 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         updateScore();
     }
 
-    private void incorrectChoice(){
+    private void incorrectChoice() {
         numTotal++;
         askQuestion();
         showSnackbar(getString(R.string.incorrect));
         updateScore();
     }
 
-    private void updateScore(){
+    private void updateScore() {
         tvScore.setText(getString(R.string.score) + " " + numCorrect + "/" + numTotal);
     }
 
 
     @Override
     public void personClicked(Items person) {
-        if(curProfile.getId() == person.getId()){
+        if (curProfile.getId() == person.getId()) {
             correctChoice();
-        }else{
+        } else {
             incorrectChoice();
         }
     }
 
-    private void showSnackbar(String message){
+    private void showSnackbar(String message) {
         Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT)
                 .show();
     }
@@ -262,7 +264,6 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-
 
 
         super.onSaveInstanceState(savedInstanceState);
@@ -278,11 +279,17 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
 
     }
 
-    private void updateView(){
+    private void updateView() {
         adapterFaces.updateProfiles(curProfiles);
         updateScore();
-        if(curProfile != null) {
+        if (curProfile != null) {
             tvName.setText(curProfile.getFirstName() + " " + curProfile.getLastName());
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        DialogManager.hideProgressDialog();
+        super.onDestroy();
     }
 }

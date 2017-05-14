@@ -56,16 +56,18 @@ public class RecyclerViewImageAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         PersonViewHolder personViewHolder = (PersonViewHolder) holder;
         personViewHolder.showProgress();
-        personViewHolder.setImage(profiles[position].getHeadshot().getUrl(), context);
-        if(profiles[position].getHeadshot().getUrl() == null){
-            Log.e("IMAGE", "null image for: " + profiles[position].getId());
-        }
-        personViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.personClicked(profiles[position]);
+        if(profiles[position] != null) {
+            personViewHolder.setImage(profiles[position].getHeadshot().getUrl(), context);
+            if (profiles[position].getHeadshot().getUrl() == null) {
+                Log.e("IMAGE", "null image for: " + profiles[position].getId());
             }
-        });
+            personViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.personClicked(profiles[position]);
+                }
+            });
+        }
     }
 
     /**
