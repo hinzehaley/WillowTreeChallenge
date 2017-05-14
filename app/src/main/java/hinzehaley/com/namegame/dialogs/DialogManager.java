@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog;
 
 import hinzehaley.com.namegame.NameGameActivity;
 import hinzehaley.com.namegame.R;
+import hinzehaley.com.namegame.listeners.DialogButtonClickListener;
 
 /**
  * Created by haleyhinze on 5/14/17.
@@ -16,18 +17,18 @@ public class DialogManager {
 
     public static ProgressDialog mProgressDialog;
 
-    public static void showAreYouSureYouWantToRestartDialog(final NameGameActivity activity){
-        AlertDialog alertDialog = new AlertDialog.Builder(activity).create();
-        alertDialog.setTitle(activity.getString(R.string.restart));
-        alertDialog.setMessage(activity.getString(R.string.are_you_sure_you_want_to_restart));
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, activity.getString(R.string.restart),
+    public static void showAreYouSureYouWantToRestartDialog(Context context, final DialogButtonClickListener listener){
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+        alertDialog.setTitle(context.getString(R.string.restart));
+        alertDialog.setMessage(context.getString(R.string.are_you_sure_you_want_to_restart));
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.restart),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        activity.restartGame();
+                        listener.buttonClicked();
                         dialog.dismiss();
                     }
                 });
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, activity.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 dialog.dismiss();
@@ -50,6 +51,20 @@ public class DialogManager {
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, context.getString(R.string.ok),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
+
+    public static void showGameOverDialog(String message, Context context, final DialogButtonClickListener listener){
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+        alertDialog.setTitle(context.getString(R.string.game_over));
+        alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.restart),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.buttonClicked();
                         dialog.dismiss();
                     }
                 });

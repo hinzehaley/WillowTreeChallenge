@@ -14,6 +14,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import hinzehaley.com.namegame.Constants;
 import hinzehaley.com.namegame.R;
+import hinzehaley.com.namegame.listeners.PersonClickedListener;
 import models.profiles.Items;
 
 /**
@@ -25,10 +26,12 @@ public class RecyclerViewImageAdapter extends RecyclerView.Adapter {
 
     private Items[] profiles = new Items[Constants.NUM_FACES];
     private Context context;
+    PersonClickedListener listener;
 
-    public RecyclerViewImageAdapter(Items[] profiles, Context context){
+    public RecyclerViewImageAdapter(Items[] profiles, Context context, PersonClickedListener listener){
         this.profiles = profiles;
         this.context = context;
+        this.listener = listener;
     }
 
     /**
@@ -50,9 +53,16 @@ public class RecyclerViewImageAdapter extends RecyclerView.Adapter {
      * @param position
      */
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         PersonViewHolder personViewHolder = (PersonViewHolder) holder;
+        personViewHolder.showProgress();
         personViewHolder.setImage(profiles[position].getHeadshot().getUrl(), context);
+        personViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.personClicked(profiles[position]);
+            }
+        });
     }
 
     /**
@@ -63,6 +73,7 @@ public class RecyclerViewImageAdapter extends RecyclerView.Adapter {
     public int getItemCount() {
         return profiles.length;
     }
+
 
     /**
      * ViewHolder that contains a cardView with a photo and a progressBar
@@ -100,6 +111,10 @@ public class RecyclerViewImageAdapter extends RecyclerView.Adapter {
                     progressBar.setVisibility(View.GONE);
                 }
             });
+        }
+
+        public void showProgress(){
+            progressBar.setVisibility(View.VISIBLE);
         }
     }
 

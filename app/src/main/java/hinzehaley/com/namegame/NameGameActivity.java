@@ -2,11 +2,10 @@ package hinzehaley.com.namegame;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,18 +17,26 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+
 import hinzehaley.com.namegame.adapters.RecyclerViewImageAdapter;
 import hinzehaley.com.namegame.dialogs.DialogManager;
+import hinzehaley.com.namegame.listeners.DialogButtonClickListener;
 import hinzehaley.com.namegame.listeners.PeopleRetrievedListener;
+import hinzehaley.com.namegame.listeners.PersonClickedListener;
 import models.VolleyPersonRequester;
 import models.profiles.Items;
 import models.profiles.Profiles;
 
-public class NameGameActivity extends AppCompatActivity implements PeopleRetrievedListener{
+public class NameGameActivity extends AppCompatActivity implements PeopleRetrievedListener, PersonClickedListener{
 
     RecyclerView recyclerViewFaces;
     VolleyPersonRequester volleyPersonRequester;
     Profiles profiles;
+    HashMap<String, Items> activeProfiles = new HashMap<String, Items>();
     Items[] curProfiles = new Items[Constants.NUM_FACES];
     RecyclerViewImageAdapter adapterFaces;
     ProgressDialog mProgressDialog;
@@ -40,6 +47,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
 
     int numCorrect = 0;
     int numTotal = 0;
+    Items curProfile;
 
 
     @Override
@@ -60,16 +68,21 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogManager.showAreYouSureYouWantToRestartDialog(NameGameActivity.this);
+                DialogManager.showAreYouSureYouWantToRestartDialog(NameGameActivity.this, new DialogButtonClickListener() {
+                    @Override
+                    public void buttonClicked() {
+                        restartGame();
+                    }
+                });
             }
         });
     }
 
-
-
-    public void restartGame(){
+    private void restartGame(){
         numCorrect = 0;
         numTotal = 0;
+        initializeActiveProfiles();
+        updateScore();
         askQuestion();
     }
 
@@ -94,7 +107,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
             recyclerViewFaces.setLayoutManager(llm);
         }
 
-        adapterFaces = new RecyclerViewImageAdapter(new Items[0], this);
+        adapterFaces = new RecyclerViewImageAdapter(new Items[0], this, this);
         recyclerViewFaces.setAdapter(adapterFaces);
 
     }
@@ -126,8 +139,23 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         DialogManager.hideProgressDialog();
         Log.i("VOLLEY", "got profiles successfully! " + profiles.getItems().length);
         this.profiles = profiles;
+        initializeActiveProfiles();
         askQuestion();
+    }
 
+    private void initializeActiveProfiles(){
+        for(int i = 0; i<profiles.getItems().length; i++){
+            activeProfiles.put(profiles.getItems()[i].getId(), profiles.getItems()[i]);
+        }
+    }
+
+    private void gameOver(){
+        DialogManager.showGameOverDialog(getString(R.string.score) + numCorrect + "/" + numTotal, this, new DialogButtonClickListener() {
+            @Override
+            public void buttonClicked() {
+                restartGame();
+            }
+        });
     }
 
     /**
@@ -135,13 +163,27 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
      */
     private void askQuestion(){
 
-        Items[] items = profiles.getItems();
+        if(activeProfiles.size() == 0){
+            gameOver();
+        }
+
+        List<String> keysAsArray = new ArrayList<String>(activeProfiles.keySet());
+        Random random = new Random();
+        int rand = random.nextInt(keysAsArray.size());
+        curProfile = activeProfiles.get(keysAsArray.get(rand));
+
+        int randIndex = random.nextInt(Constants.NUM_FACES);
+
         for(int i = 0; i<Constants.NUM_FACES; i++){
-           curProfiles[i] = items[i];
+            if(i == randIndex){
+                curProfiles[i] = curProfile;
+            }else{
+                rand = random.nextInt(keysAsArray.size());
+                curProfiles[i] = activeProfiles.get(keysAsArray.get(rand));
+            }
         }
         adapterFaces.updateProfiles(curProfiles);
-
-        //TODO: fill in with actual quiz
+        tvName.setText(curProfile.getFirstName() + " " + curProfile.getLastName());
     }
 
     /**
@@ -177,5 +219,38 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         }
     }
 
+    private void correctChoice(){
+        activeProfiles.remove(curProfile.getId());
+        numCorrect++;
+        numTotal++;
+        askQuestion();
+        showSnackbar(getString(R.string.correct));
+        updateScore();
+    }
 
+    private void incorrectChoice(){
+        numTotal++;
+        askQuestion();
+        showSnackbar(getString(R.string.incorrect));
+        updateScore();
+    }
+
+    private void updateScore(){
+        tvScore.setText(getString(R.string.score) + " " + numCorrect + "/" + numTotal);
+    }
+
+
+    @Override
+    public void personClicked(Items person) {
+        if(curProfile.getId() == person.getId()){
+            correctChoice();
+        }else{
+            incorrectChoice();
+        }
+    }
+
+    private void showSnackbar(String message){
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT)
+                .show();
+    }
 }

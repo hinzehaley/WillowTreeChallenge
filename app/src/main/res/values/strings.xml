@@ -13,4 +13,7 @@
     <string name="restart">Restart</string>
     <string name="are_you_sure_you_want_to_restart">Are you sure you want to restart?</string>
     <string name="cancel">Cancel</string>
+    <string name="incorrect">Incorrect</string>
+    <string name="correct">Correct!</string>
+    <string name="game_over">Game Over</string>
 </resources>
