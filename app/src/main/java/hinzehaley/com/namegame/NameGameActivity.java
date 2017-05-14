@@ -52,9 +52,13 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
 
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true);
+            //start at leftmost position
+            llm.setStackFromEnd(true);
             recyclerViewFaces.setLayoutManager(llm);
         }else{
             LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
+            //start at top
+            llm.setStackFromEnd(true);
             recyclerViewFaces.setLayoutManager(llm);
         }
 
