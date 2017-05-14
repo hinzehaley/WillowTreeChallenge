@@ -16,4 +16,8 @@
     <string name="incorrect">Incorrect</string>
     <string name="correct">Correct!</string>
     <string name="game_over">Game Over</string>
+    <string name="matt">Matt</string>
+    <string name="learn">Learn</string>
+    <string name="reverse">Reverse</string>
+    <string name="test">Test</string>
 </resources>

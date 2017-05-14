@@ -11,6 +11,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -49,6 +52,12 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
     static int numTotal = 0;
     static Items curProfile;
 
+    public enum Mode {
+        NORMAL, REVERSE, MATT, TEST
+    }
+
+    private Mode mode;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +68,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         setupViewItems();
 
         setUpRecyclerview();
+        mode = Mode.NORMAL;
     }
 
     private void setupViewItems() {
@@ -144,8 +154,22 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         askQuestion();
     }
 
+    /**
+     * initializes activeProfiles with all profiles we want to learn about. In Matt mode, add
+     * only Matts and Matthews. All other modes, add everyone
+     */
     private void initializeActiveProfiles() {
+        activeProfiles.clear();
         for (int i = 0; i < profiles.getItems().length; i++) {
+            switch(mode){
+                case MATT:
+                    String name = profiles.getItems()[i].getFirstName().toLowerCase();
+                    if(name.equals(Constants.MATT) || name.equals(Constants.MATTHEW) || name.equals(Constants.MAT)){
+                        activeProfiles.put(profiles.getItems()[i].getId(), profiles.getItems()[i]);
+                    }else{
+                        continue;
+                    }
+            }
             activeProfiles.put(profiles.getItems()[i].getId(), profiles.getItems()[i]);
         }
     }
@@ -226,6 +250,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         }
     }
 
+
     private void correctChoice() {
         activeProfiles.remove(curProfile.getId());
         numCorrect++;
@@ -291,5 +316,39 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
     protected void onDestroy() {
         DialogManager.hideProgressDialog();
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_name_game, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_learn:
+                mode = Mode.NORMAL;
+                restartGame();
+                return true;
+            case R.id.action_matt:
+                mode = Mode.MATT;
+                restartGame();
+                return true;
+            case R.id.action_reverse:
+                mode = Mode.REVERSE;
+                restartGame();
+                return true;
+            case R.id.action_test:
+                mode = Mode.TEST;
+                restartGame();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 }
