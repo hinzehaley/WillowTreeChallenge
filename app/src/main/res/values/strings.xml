@@ -9,4 +9,8 @@
     <string name="get_profiles">Get Profiles</string>
     <string name="error_getting_profiles">There was an error retrieving profiles.</string>
     <string name="error">Error</string>
+    <string name="score">Score:</string>
+    <string name="restart">Restart</string>
+    <string name="are_you_sure_you_want_to_restart">Are you sure you want to restart?</string>
+    <string name="cancel">Cancel</string>
 </resources>

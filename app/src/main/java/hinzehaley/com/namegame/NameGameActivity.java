@@ -12,10 +12,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 
 import hinzehaley.com.namegame.adapters.RecyclerViewImageAdapter;
+import hinzehaley.com.namegame.dialogs.DialogManager;
 import hinzehaley.com.namegame.listeners.PeopleRetrievedListener;
 import models.VolleyPersonRequester;
 import models.profiles.Items;
@@ -30,6 +34,13 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
     RecyclerViewImageAdapter adapterFaces;
     ProgressDialog mProgressDialog;
 
+    TextView tvScore;
+    TextView tvName;
+    Button btnReset;
+
+    int numCorrect = 0;
+    int numTotal = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +48,29 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         setContentView(R.layout.activity_name_game);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setupViewItems();
 
         setUpRecyclerview();
+    }
+
+    private void setupViewItems(){
+        tvScore = (TextView) findViewById(R.id.txt_score);
+        tvName = (TextView) findViewById(R.id.txt_name);
+        btnReset = (Button) findViewById(R.id.btn_restart);
+        btnReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogManager.showAreYouSureYouWantToRestartDialog(NameGameActivity.this);
+            }
+        });
+    }
+
+
+
+    public void restartGame(){
+        numCorrect = 0;
+        numTotal = 0;
+        askQuestion();
     }
 
     /**
@@ -77,10 +109,10 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
             volleyPersonRequester = VolleyPersonRequester.getInstance();
         }
         if(networkConnected()) {
-            showProgressDialog();
+            DialogManager.showProgressDialog(this);
             volleyPersonRequester.requestPeople(this, this);
         }else{
-            showNetworkNotConnectedDialog();
+            DialogManager.showNetworkNotConnectedDialog(this);
         }
     }
 
@@ -91,7 +123,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
      */
     @Override
     public void peopleRetrieved(Profiles profiles) {
-        hideProgressDialog();
+        DialogManager.hideProgressDialog();
         Log.i("VOLLEY", "got profiles successfully! " + profiles.getItems().length);
         this.profiles = profiles;
         askQuestion();
@@ -118,43 +150,11 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
      */
     @Override
     public void errorResponse(VolleyError error) {
-        hideProgressDialog();
-        showProfileErrorDialog(error.getMessage());
+        DialogManager.hideProgressDialog();
+        DialogManager.showProfileErrorDialog(error.getMessage(), this);
     }
 
 
-    /**
-     * Shows a dialog telling the user to connect to a network
-     */
-    private void showNetworkNotConnectedDialog(){
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle(getString(R.string.network));
-        alertDialog.setMessage(getString(R.string.not_connected));
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        alertDialog.show();
-    }
-
-    /**
-     * Shows a dialog telling the user there was an error retrieving the profiles
-     * @param errorMessage
-     */
-    private void showProfileErrorDialog(String errorMessage){
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle(getString(R.string.error));
-        alertDialog.setMessage(getString(R.string.error_getting_profiles) + errorMessage);
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        alertDialog.show();
-    }
 
     /**
      * Checks for a network connection
@@ -177,27 +177,5 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         }
     }
 
-    /**
-     * Shows a progress dialog to display while retrieving profiles
-     */
-    private void showProgressDialog(){
-        if(mProgressDialog == null){
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage(getString(R.string.loading));
-            mProgressDialog.setMessage(getString(R.string.get_profiles));
-            mProgressDialog.setIndeterminate(false);
-            mProgressDialog.setCancelable(false);
-        }
 
-        mProgressDialog.show();
-    }
-
-    /**
-     * Hides progress dialog
-     */
-    private void hideProgressDialog(){
-        if(mProgressDialog != null){
-            mProgressDialog.dismiss();
-        }
-    }
 }
