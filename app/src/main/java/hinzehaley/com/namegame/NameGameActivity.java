@@ -162,6 +162,8 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
      * Asks a new question by presenting a name and six faces
      */
     private void askQuestion(){
+        //go to start of recyclerView
+        recyclerViewFaces.scrollToPosition(adapterFaces.getItemCount()-1);
 
         Log.i("HASHMAP", "size is: " + activeProfiles.size());
 
