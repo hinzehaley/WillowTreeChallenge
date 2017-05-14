@@ -19,6 +19,7 @@ import models.profiles.Profiles;
 
 /**
  * Created by haleyhinze on 5/14/17.
+ * Uses Volley to request profiles
  */
 
 public class VolleyPersonRequester {
