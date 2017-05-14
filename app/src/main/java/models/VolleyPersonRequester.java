@@ -60,6 +60,7 @@ public class VolleyPersonRequester {
                 @Override
                 public void onResponse(JSONObject response) {
                     String jsonString = response.toString();
+                    Log.i("VOLLEY", "jsonString: " + jsonString);
                     Profiles profiles = new Gson().fromJson(jsonString, Profiles.class);
                     listener.peopleRetrieved(profiles);
 

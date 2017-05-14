@@ -12,8 +12,6 @@ public class Items
 
     private Headshot headshot;
 
-    private String[] socialLinks;
-
     private String slug;
 
     private String firstName;
@@ -52,15 +50,7 @@ public class Items
         this.headshot = headshot;
     }
 
-    public String[] getSocialLinks ()
-    {
-        return socialLinks;
-    }
 
-    public void setSocialLinks (String[] socialLinks)
-    {
-        this.socialLinks = socialLinks;
-    }
 
     public String getSlug ()
     {
@@ -105,6 +95,6 @@ public class Items
     @Override
     public String toString()
     {
-        return "ClassItems [id = "+id+", lastName = "+lastName+", headshot = "+headshot+", socialLinks = "+socialLinks+", slug = "+slug+", firstName = "+firstName+", type = "+type+", jobTitle = "+jobTitle+"]";
+        return "ClassItems [id = "+id+", lastName = "+lastName+", headshot = "+headshot+", slug = "+slug+", firstName = "+firstName+", type = "+type+", jobTitle = "+jobTitle+"]";
     }
 }
