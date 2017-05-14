@@ -56,7 +56,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         NORMAL, REVERSE, MATT, TEST
     }
 
-    private Mode mode;
+    private static Mode mode;
 
 
     @Override
@@ -208,8 +208,20 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
             if (i == randIndex) {
                 curProfiles[i] = curProfile;
             } else {
-                rand = random.nextInt(keysAsArray.size());
-                curProfiles[i] = activeProfiles.get(keysAsArray.get(rand));
+                switch(mode){
+                    case TEST:
+                        rand = random.nextInt(profiles.getItems().length);
+                        curProfiles[i] = profiles.getItems()[rand];
+                        Log.i("MODE", " TEST");
+                        break;
+                    default:
+                        rand = random.nextInt(keysAsArray.size());
+                        curProfiles[i] = activeProfiles.get(keysAsArray.get(rand));
+                        Log.i("MODE", " NOT TEST");
+                        break;
+
+                }
+
             }
         }
         adapterFaces.updateProfiles(curProfiles);
@@ -262,9 +274,14 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
 
     private void incorrectChoice() {
         numTotal++;
-        askQuestion();
         showSnackbar(getString(R.string.incorrect));
         updateScore();
+        switch(mode){
+            case TEST:
+                activeProfiles.remove(curProfile.getId());
+                break;
+        }
+        askQuestion();
     }
 
     private void updateScore() {
@@ -289,16 +306,15 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-
-
+        savedInstanceState.putSerializable(Constants.MODE, mode);
         super.onSaveInstanceState(savedInstanceState);
     }
 
-//onRestoreInstanceState
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         updateView();
+        mode = (Mode) savedInstanceState.get(Constants.MODE);
         super.onRestoreInstanceState(savedInstanceState);
 
 

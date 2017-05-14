@@ -12,5 +12,6 @@ public class Constants {
     public static final String MATT = "matt";
     public static final String MATTHEW = "matthew";
     public static final String MAT = "mat";
+    public static final String MODE = "mode";
 
 }
