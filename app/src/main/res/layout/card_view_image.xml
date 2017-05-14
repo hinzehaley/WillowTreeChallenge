@@ -13,11 +13,11 @@
         android:id="@+id/card_view"
         >
             <RelativeLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:foregroundGravity="center"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <ProgressBar
                     android:id="@+id/progress_bar"
@@ -35,9 +35,9 @@
                 android:layout_gravity="center"
                 android:foregroundGravity="center"
                 android:id="@+id/person_photo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp" />
 
             </RelativeLayout>
 

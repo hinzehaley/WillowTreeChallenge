@@ -57,6 +57,9 @@ public class RecyclerViewImageAdapter extends RecyclerView.Adapter {
         PersonViewHolder personViewHolder = (PersonViewHolder) holder;
         personViewHolder.showProgress();
         personViewHolder.setImage(profiles[position].getHeadshot().getUrl(), context);
+        if(profiles[position].getHeadshot().getUrl() == null){
+            Log.e("IMAGE", "null image for: " + profiles[position].getId());
+        }
         personViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,7 +103,8 @@ public class RecyclerViewImageAdapter extends RecyclerView.Adapter {
         public void setImage(String url, Context context){
             String modUrl = "http:" + url;
             Log.i("IMAGE", "loading in : " + url);
-            Picasso.with(context).load(modUrl).error(R.drawable.ic_action_name).into(personPhoto, new Callback() {
+
+            Picasso.with(context).load(modUrl).error(R.drawable.ic_action_name).fit().centerCrop().into(personPhoto, new Callback() {
                 @Override
                 public void onSuccess() {
                     progressBar.setVisibility(View.GONE);
