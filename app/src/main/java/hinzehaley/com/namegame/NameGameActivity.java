@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,6 +38,7 @@ import hinzehaley.com.namegame.dialogs.DialogManager;
 import hinzehaley.com.namegame.listeners.DialogButtonClickListener;
 import hinzehaley.com.namegame.listeners.PeopleRetrievedListener;
 import hinzehaley.com.namegame.listeners.PersonClickedListener;
+import hinzehaley.com.namegame.modal.CorrectAnswerDialog;
 import models.VolleyPersonRequester;
 import models.profiles.Items;
 import models.profiles.Profiles;
@@ -53,6 +55,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
 
 
     TextView tvScore;
+    FloatingActionButton btnRefresh;
 
 
     TextView tvName;
@@ -91,6 +94,18 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         imgPerson = (ImageView) findViewById(R.id.img_person);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         frameInfo = (FrameLayout) findViewById(R.id.frame_info);
+        btnRefresh = (FloatingActionButton) findViewById(R.id.fab_restart);
+        btnRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogManager.showAreYouSureYouWantToRestartDialog(NameGameActivity.this, new DialogButtonClickListener() {
+                    @Override
+                    public void buttonClicked() {
+                        restartGame();
+                    }
+                });
+            }
+        });
 
 
     }
@@ -268,19 +283,22 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         progressBar.setVisibility(View.VISIBLE);
         tvName.setVisibility(View.GONE);
         imgPerson.setVisibility(View.VISIBLE);
-        String modUrl = "http:" + curProfile.getHeadshot().getUrl();
 
-        Picasso.with(this).load(modUrl).error(R.drawable.ic_error).fit().centerCrop().into(imgPerson, new Callback() {
-            @Override
-            public void onSuccess() {
-                progressBar.setVisibility(View.GONE);
-            }
+        if(curProfile != null) {
+            String modUrl = "http:" + curProfile.getHeadshot().getUrl();
 
-            @Override
-            public void onError() {
-                progressBar.setVisibility(View.GONE);
-            }
-        });
+            Picasso.with(this).load(modUrl).error(R.drawable.ic_error).fit().centerCrop().into(imgPerson, new Callback() {
+                @Override
+                public void onSuccess() {
+                    progressBar.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onError() {
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
+        }
 
     }
 
@@ -295,10 +313,12 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
             recyclerViewFaces.setLayoutParams(paramsTall);
         }
         showingImageQuestion = false;
-        tvName.setText(curProfile.getFirstName() + " " + curProfile.getLastName());
-        tvName.setVisibility(View.VISIBLE);
-        imgPerson.setVisibility(View.GONE);
-        progressBar.setVisibility(View.GONE);
+        if(curProfile != null) {
+            tvName.setText(curProfile.getFirstName() + " " + curProfile.getLastName());
+            tvName.setVisibility(View.VISIBLE);
+            imgPerson.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+        }
 
     }
 
@@ -357,6 +377,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
                 activeProfiles.remove(curProfile.getId());
                 break;
         }
+        showCorrectAnswerDialog();
         askQuestion();
     }
 
@@ -448,5 +469,14 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    private void showCorrectAnswerDialog(){
+        if(curProfile != null) {
+            String name = curProfile.getFirstName() + " " + curProfile.getLastName();
+            String url = "http:" + curProfile.getHeadshot().getUrl();
+            CorrectAnswerDialog dialog = CorrectAnswerDialog.getInstance(name, url);
+            dialog.show(getSupportFragmentManager(), "ANSWER");
+        }
     }
 }

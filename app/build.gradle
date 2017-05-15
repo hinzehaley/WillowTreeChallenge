@@ -4,6 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.1"
     defaultConfig {
+        vectorDrawables.useSupportLibrary = true
         applicationId "hinzehaley.com.namegame"
         minSdkVersion 16
         targetSdkVersion 25
