@@ -12,14 +12,12 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-
 import hinzehaley.com.namegame.R;
 import models.PicassoLoader;
 
 /**
  * Created by haleyhinze on 5/15/17.
+ * DialogFragment to display face and name of correct answer
  */
 
 public class CorrectAnswerDialog extends DialogFragment {
@@ -28,10 +26,18 @@ public class CorrectAnswerDialog extends DialogFragment {
     public static String name;
     public static String url;
 
+    /**
+     * Required empty public constructor
+     */
     public CorrectAnswerDialog(){
-
     }
 
+    /**
+     * Sets fields and returns instance
+     * @param name
+     * @param url
+     * @return
+     */
     public static CorrectAnswerDialog getInstance(String name, String url){
         if(dialog == null){
             dialog = new CorrectAnswerDialog();
@@ -42,19 +48,20 @@ public class CorrectAnswerDialog extends DialogFragment {
     }
 
 
+    /**
+     * Builds new AlertDialog with custom view. Loads in image and sets name
+     * @param savedInstanceState
+     * @return
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
-
         View v = inflater.inflate(R.layout.dialog_correct, null);
 
-        // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(v)
-                // Add action buttons
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -71,6 +78,11 @@ public class CorrectAnswerDialog extends DialogFragment {
         return dialog;
     }
 
+    /**
+     * Loads image using Picasso
+     * @param imgImg
+     * @param progressBar
+     */
     private void loadInImage(ImageView imgImg, final ProgressBar progressBar){
         if(url != null) {
             PicassoLoader.loadInImage(getContext(), imgImg, progressBar, url);

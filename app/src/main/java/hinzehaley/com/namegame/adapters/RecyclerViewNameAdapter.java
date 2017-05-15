@@ -21,13 +21,11 @@ import models.profiles.Items;
 public class RecyclerViewNameAdapter extends RecyclerView.Adapter{
 
     private Items[] profiles = new Items[Constants.NUM_FACES];
-    private Context context;
     PersonClickedListener listener;
 
 
-    public RecyclerViewNameAdapter(Items[] profiles, Context context, PersonClickedListener listener){
+    public RecyclerViewNameAdapter(Items[] profiles, PersonClickedListener listener){
         this.profiles = profiles;
-        this.context = context;
         this.listener = listener;
     }
 

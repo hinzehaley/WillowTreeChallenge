@@ -14,5 +14,6 @@ public class Constants {
     public static final String SHARED_PREFERENCES = "sharedPrefs";
     public static final String HIGHSCORE = "highscore";
     public static final String ANSWER_DIALOG_NAME = "answer";
+    public static final String API_URL = "https://www.willowtreeapps.com/api/v1.0/profiles";
 
 }

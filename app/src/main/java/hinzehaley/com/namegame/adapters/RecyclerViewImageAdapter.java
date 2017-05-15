@@ -7,12 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 import hinzehaley.com.namegame.Constants;
 import hinzehaley.com.namegame.R;
 import hinzehaley.com.namegame.listeners.PersonClickedListener;

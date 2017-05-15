@@ -36,7 +36,6 @@ import hinzehaley.com.namegame.dialogs.DialogManager;
 import hinzehaley.com.namegame.listeners.DialogButtonClickListener;
 import hinzehaley.com.namegame.listeners.PeopleRetrievedListener;
 import hinzehaley.com.namegame.listeners.PersonClickedListener;
-import hinzehaley.com.namegame.modal.CorrectAnswerDialog;
 import models.PicassoLoader;
 import models.VolleyPersonRequester;
 import models.profiles.Items;
@@ -140,7 +139,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
             recyclerViewFaces.setLayoutManager(llm);
         }
         adapterFaces = new RecyclerViewImageAdapter(new Items[0], this, this);
-        adapterNames = new RecyclerViewNameAdapter(new Items[0], this, this);
+        adapterNames = new RecyclerViewNameAdapter(new Items[0], this);
         recyclerViewFaces.setAdapter(adapterFaces);
 
 
@@ -414,7 +413,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
                 activeProfiles.remove(curProfile.getId());
                 break;
             default:
-                showCorrectAnswerDialog();
+                DialogManager.showCorrectAnswerDialog(curProfile, getSupportFragmentManager());
         }
         askQuestion();
     }
@@ -539,18 +538,6 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
                 return super.onOptionsItemSelected(item);
         }
 
-    }
-
-    /**
-     * Shows a dialog with the correct answer
-     */
-    private void showCorrectAnswerDialog(){
-        if(curProfile != null) {
-            String name = curProfile.getFirstName() + " " + curProfile.getLastName();
-            String url = curProfile.getHeadshot().getUrl();
-            CorrectAnswerDialog dialog = CorrectAnswerDialog.getInstance(name, url);
-            dialog.show(getSupportFragmentManager(), Constants.ANSWER_DIALOG_NAME);
-        }
     }
 
     /**

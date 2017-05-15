@@ -3,20 +3,30 @@ package hinzehaley.com.namegame.dialogs;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 
-import hinzehaley.com.namegame.NameGameActivity;
+import hinzehaley.com.namegame.Constants;
 import hinzehaley.com.namegame.R;
 import hinzehaley.com.namegame.listeners.DialogButtonClickListener;
+import hinzehaley.com.namegame.modal.CorrectAnswerDialog;
+import models.profiles.Items;
 
 /**
  * Created by haleyhinze on 5/14/17.
+ * Class to show various AlertDialogs
  */
 
 public class DialogManager {
 
     public static ProgressDialog mProgressDialog;
 
+
+    /**
+     * Shows dialog asking if user really wants to restart the game
+     * @param context
+     * @param listener
+     */
     public static void showAreYouSureYouWantToRestartDialog(Context context, final DialogButtonClickListener listener){
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
         alertDialog.setTitle(context.getString(R.string.restart));
@@ -44,6 +54,13 @@ public class DialogManager {
         showBasicDialog(context.getString(R.string.not_connected), context.getString(R.string.network), context);
     }
 
+    /**
+     * Shows a basic dialog with the given message and title. When ok button is clicked,
+     * dismisses dialog
+     * @param message
+     * @param title
+     * @param context
+     */
     private static void showBasicDialog(String message, String title, Context context){
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
         alertDialog.setTitle(title);
@@ -57,6 +74,12 @@ public class DialogManager {
         alertDialog.show();
     }
 
+    /**
+     * Shows a dialog telling the user the given message and giving user option to restart game
+     * @param message
+     * @param context
+     * @param listener
+     */
     public static void showGameOverDialog(String message, Context context, final DialogButtonClickListener listener){
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
         alertDialog.setTitle(context.getString(R.string.game_over));
@@ -101,6 +124,18 @@ public class DialogManager {
     public static void hideProgressDialog(){
         if(mProgressDialog != null){
             mProgressDialog.dismiss();
+        }
+    }
+
+    /**
+     * Shows a dialog with the correct answer
+     */
+    public static void showCorrectAnswerDialog(Items curProfile, FragmentManager fragmentManager){
+        if(curProfile != null) {
+            String name = curProfile.getFirstName() + " " + curProfile.getLastName();
+            String url = curProfile.getHeadshot().getUrl();
+            CorrectAnswerDialog dialog = CorrectAnswerDialog.getInstance(name, url);
+            dialog.show(fragmentManager, Constants.ANSWER_DIALOG_NAME);
         }
     }
 }

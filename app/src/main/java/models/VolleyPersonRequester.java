@@ -1,8 +1,6 @@
 package models;
 
 import android.content.Context;
-import android.util.Log;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -14,6 +12,7 @@ import com.google.gson.Gson;
 import org.json.JSONObject;
 
 
+import hinzehaley.com.namegame.Constants;
 import hinzehaley.com.namegame.listeners.PeopleRetrievedListener;
 import models.profiles.Profiles;
 
@@ -48,20 +47,18 @@ public class VolleyPersonRequester {
 
     public void requestPeople(final Context context, final PeopleRetrievedListener listener) {
 
-        String urlPath = "https://www.willowtreeapps.com/api/v1.0/profiles";
+        String urlPath = Constants.API_URL;
         // Instantiate the RequestQueue.
         if(queue == null) {
             queue = Volley.newRequestQueue(context);
         }
 
-
-        // Request a string response from the provided URL. Passes reponse into callerFragment
+        // Request a string response from the provided URL. Passes reponse into listener
         JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, urlPath, null,
                 new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     String jsonString = response.toString();
-                    Log.i("VOLLEY", "jsonString: " + jsonString);
                     Profiles profiles = new Gson().fromJson(jsonString, Profiles.class);
                     listener.peopleRetrieved(profiles);
 
@@ -69,7 +66,6 @@ public class VolleyPersonRequester {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.e("VOLLEY", "error: " + error.getMessage());
                     error.printStackTrace();
                     listener.errorResponse(error);
                 }
