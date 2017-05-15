@@ -16,6 +16,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import hinzehaley.com.namegame.R;
+import models.PicassoLoader;
 
 /**
  * Created by haleyhinze on 5/15/17.
@@ -71,21 +72,8 @@ public class CorrectAnswerDialog extends DialogFragment {
     }
 
     private void loadInImage(ImageView imgImg, final ProgressBar progressBar){
-        progressBar.setVisibility(View.VISIBLE);
-
         if(url != null) {
-
-            Picasso.with(getContext()).load(url).error(R.drawable.ic_error).fit().centerCrop().into(imgImg, new Callback() {
-                @Override
-                public void onSuccess() {
-                    progressBar.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onError() {
-                    progressBar.setVisibility(View.GONE);
-                }
-            });
+            PicassoLoader.loadInImage(getContext(), imgImg, progressBar, url);
         }
     }
 

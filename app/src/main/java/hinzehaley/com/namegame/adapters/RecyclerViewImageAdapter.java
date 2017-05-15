@@ -16,6 +16,7 @@ import com.squareup.picasso.Picasso;
 import hinzehaley.com.namegame.Constants;
 import hinzehaley.com.namegame.R;
 import hinzehaley.com.namegame.listeners.PersonClickedListener;
+import models.PicassoLoader;
 import models.profiles.Items;
 
 /**
@@ -57,7 +58,6 @@ public class RecyclerViewImageAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         PersonViewHolder personViewHolder = (PersonViewHolder) holder;
-        personViewHolder.showProgress();
         if(profiles[position] != null) {
             personViewHolder.setImage(profiles[position].getHeadshot().getUrl(), context);
             if (profiles[position].getHeadshot().getUrl() == null) {
@@ -105,23 +105,7 @@ public class RecyclerViewImageAdapter extends RecyclerView.Adapter {
          * @param context
          */
         public void setImage(String url, Context context){
-            String modUrl = "http:" + url;
-
-            Picasso.with(context).load(modUrl).error(R.drawable.ic_error).fit().centerCrop().into(personPhoto, new Callback() {
-                @Override
-                public void onSuccess() {
-                    progressBar.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onError() {
-                    progressBar.setVisibility(View.GONE);
-                }
-            });
-        }
-
-        public void showProgress(){
-            progressBar.setVisibility(View.VISIBLE);
+            PicassoLoader.loadInImage(context, personPhoto, progressBar, url);
         }
     }
 
