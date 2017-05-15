@@ -13,8 +13,7 @@
         android:paddingTop="5dp"
         android:gravity="center"
         android:layout_weight="1"
-        android:text="@string/score"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/colorPrimaryDark"
         android:layout_width="wrap_content"
         android:layout_height="0dp" />
 

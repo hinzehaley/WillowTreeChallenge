@@ -1,25 +1,20 @@
 package hinzehaley.com.namegame;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -63,8 +58,8 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
     TextView tvName;
     ImageView imgPerson;
     ProgressBar progressBar;
-    FrameLayout layoutQuestion;
     FrameLayout frameInfo;
+
 
     static int numCorrect = 0;
     static int numTotal = 0;
@@ -96,6 +91,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         imgPerson = (ImageView) findViewById(R.id.img_person);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         frameInfo = (FrameLayout) findViewById(R.id.frame_info);
+
 
     }
 
@@ -131,6 +127,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         adapterFaces = new RecyclerViewImageAdapter(new Items[0], this, this);
         adapterNames = new RecyclerViewNameAdapter(new Items[0], this, this);
         recyclerViewFaces.setAdapter(adapterFaces);
+
 
     }
 
@@ -233,7 +230,6 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
                     case TEST:
                         rand = random.nextInt(profiles.getItems().length);
                         curProfiles[i] = profiles.getItems()[rand];
-                        Log.i("MODE", " TEST");
                         showImage = random.nextInt(2);
                         break;
                     case REVERSE:
@@ -241,7 +237,6 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
                     default:
                         rand = random.nextInt(keysAsArray.size());
                         curProfiles[i] = activeProfiles.get(keysAsArray.get(rand));
-                        Log.i("MODE", " NOT TEST");
                         break;
 
                 }
@@ -257,6 +252,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
             adapterNames.updateProfiles(curProfiles);
             showImage();
         }
+
     }
 
     private void showImage(){
@@ -274,7 +270,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         imgPerson.setVisibility(View.VISIBLE);
         String modUrl = "http:" + curProfile.getHeadshot().getUrl();
 
-        Picasso.with(this).load(modUrl).error(R.drawable.ic_action_name).fit().centerCrop().into(imgPerson, new Callback() {
+        Picasso.with(this).load(modUrl).error(R.drawable.ic_error).fit().centerCrop().into(imgPerson, new Callback() {
             @Override
             public void onSuccess() {
                 progressBar.setVisibility(View.GONE);

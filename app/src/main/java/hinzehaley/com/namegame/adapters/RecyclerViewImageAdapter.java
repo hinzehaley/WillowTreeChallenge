@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -105,9 +106,8 @@ public class RecyclerViewImageAdapter extends RecyclerView.Adapter {
          */
         public void setImage(String url, Context context){
             String modUrl = "http:" + url;
-            Log.i("IMAGE", "loading in : " + url);
 
-            Picasso.with(context).load(modUrl).error(R.drawable.ic_action_name).fit().centerCrop().into(personPhoto, new Callback() {
+            Picasso.with(context).load(modUrl).error(R.drawable.ic_error).fit().centerCrop().into(personPhoto, new Callback() {
                 @Override
                 public void onSuccess() {
                     progressBar.setVisibility(View.GONE);

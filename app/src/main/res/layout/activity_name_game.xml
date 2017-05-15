@@ -22,4 +22,7 @@
 
     <include layout="@layout/content_name_game" />
 
+
+    
+
 </android.support.design.widget.CoordinatorLayout>
