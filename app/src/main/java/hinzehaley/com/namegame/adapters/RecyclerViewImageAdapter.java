@@ -28,6 +28,7 @@ public class RecyclerViewImageAdapter extends RecyclerView.Adapter {
     private Context context;
     PersonClickedListener listener;
 
+
     public RecyclerViewImageAdapter(Items[] profiles, Context context, PersonClickedListener listener){
         this.profiles = profiles;
         this.context = context;

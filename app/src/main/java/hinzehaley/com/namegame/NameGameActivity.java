@@ -5,20 +5,31 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +37,7 @@ import java.util.List;
 import java.util.Random;
 
 import hinzehaley.com.namegame.adapters.RecyclerViewImageAdapter;
+import hinzehaley.com.namegame.adapters.RecyclerViewNameAdapter;
 import hinzehaley.com.namegame.dialogs.DialogManager;
 import hinzehaley.com.namegame.listeners.DialogButtonClickListener;
 import hinzehaley.com.namegame.listeners.PeopleRetrievedListener;
@@ -42,11 +54,17 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
     static HashMap<String, Items> activeProfiles = new HashMap<String, Items>();
     static Items[] curProfiles = new Items[Constants.NUM_FACES];
     RecyclerViewImageAdapter adapterFaces;
-    ProgressDialog mProgressDialog;
+    RecyclerViewNameAdapter adapterNames;
+
 
     TextView tvScore;
+
+
     TextView tvName;
-    Button btnReset;
+    ImageView imgPerson;
+    ProgressBar progressBar;
+    FrameLayout layoutQuestion;
+    FrameLayout frameInfo;
 
     static int numCorrect = 0;
     static int numTotal = 0;
@@ -57,6 +75,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
     }
 
     private static Mode mode;
+    private static boolean showingImageQuestion = false;
 
 
     @Override
@@ -74,18 +93,10 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
     private void setupViewItems() {
         tvScore = (TextView) findViewById(R.id.txt_score);
         tvName = (TextView) findViewById(R.id.txt_name);
-        btnReset = (Button) findViewById(R.id.btn_restart);
-        btnReset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DialogManager.showAreYouSureYouWantToRestartDialog(NameGameActivity.this, new DialogButtonClickListener() {
-                    @Override
-                    public void buttonClicked() {
-                        restartGame();
-                    }
-                });
-            }
-        });
+        imgPerson = (ImageView) findViewById(R.id.img_person);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        frameInfo = (FrameLayout) findViewById(R.id.frame_info);
+
     }
 
     private void restartGame() {
@@ -105,7 +116,7 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
             recyclerViewFaces = (RecyclerView) findViewById(R.id.recycler_faces);
         }
 
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (isPortrait()) {
             LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true);
             //start at leftmost position
             llm.setStackFromEnd(true);
@@ -118,8 +129,16 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
         }
 
         adapterFaces = new RecyclerViewImageAdapter(new Items[0], this, this);
+        adapterNames = new RecyclerViewNameAdapter(new Items[0], this, this);
         recyclerViewFaces.setAdapter(adapterFaces);
 
+    }
+
+    private boolean isPortrait(){
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -204,6 +223,8 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
 
         int randIndex = random.nextInt(Constants.NUM_FACES);
 
+        int showImage = 0;
+
         for (int i = 0; i < Constants.NUM_FACES; i++) {
             if (i == randIndex) {
                 curProfiles[i] = curProfile;
@@ -213,7 +234,10 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
                         rand = random.nextInt(profiles.getItems().length);
                         curProfiles[i] = profiles.getItems()[rand];
                         Log.i("MODE", " TEST");
+                        showImage = random.nextInt(2);
                         break;
+                    case REVERSE:
+                        showImage = 1;
                     default:
                         rand = random.nextInt(keysAsArray.size());
                         curProfiles[i] = activeProfiles.get(keysAsArray.get(rand));
@@ -224,9 +248,65 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
 
             }
         }
-        adapterFaces.updateProfiles(curProfiles);
-        tvName.setText(curProfile.getFirstName() + " " + curProfile.getLastName());
+        if(showImage == 0) {
+            recyclerViewFaces.setAdapter(adapterFaces);
+            adapterFaces.updateProfiles(curProfiles);
+            showName();
+        }else{
+            recyclerViewFaces.setAdapter(adapterNames);
+            adapterNames.updateProfiles(curProfiles);
+            showImage();
+        }
     }
+
+    private void showImage(){
+        LinearLayout.LayoutParams paramsTall = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 3);
+        LinearLayout.LayoutParams paramsShort = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 2);
+
+
+        if(isPortrait()){
+            frameInfo.setLayoutParams(paramsTall);
+            recyclerViewFaces.setLayoutParams(paramsShort);
+        }
+        showingImageQuestion = true;
+        progressBar.setVisibility(View.VISIBLE);
+        tvName.setVisibility(View.GONE);
+        imgPerson.setVisibility(View.VISIBLE);
+        String modUrl = "http:" + curProfile.getHeadshot().getUrl();
+
+        Picasso.with(this).load(modUrl).error(R.drawable.ic_action_name).fit().centerCrop().into(imgPerson, new Callback() {
+            @Override
+            public void onSuccess() {
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError() {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+    }
+
+    private void showName(){
+
+        LinearLayout.LayoutParams paramsTall = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 3);
+        LinearLayout.LayoutParams paramsShort = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 2);
+
+
+        if(isPortrait()){
+            frameInfo.setLayoutParams(paramsShort);
+            recyclerViewFaces.setLayoutParams(paramsTall);
+        }
+        showingImageQuestion = false;
+        tvName.setText(curProfile.getFirstName() + " " + curProfile.getLastName());
+        tvName.setVisibility(View.VISIBLE);
+        imgPerson.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
+
+    }
+
+
 
     /**
      * Callback from volleyPersonRequester if unable to retrieve profiles
@@ -321,11 +401,17 @@ public class NameGameActivity extends AppCompatActivity implements PeopleRetriev
     }
 
     private void updateView() {
-        adapterFaces.updateProfiles(curProfiles);
-        updateScore();
-        if (curProfile != null) {
-            tvName.setText(curProfile.getFirstName() + " " + curProfile.getLastName());
+        if(showingImageQuestion){
+            showImage();
+            adapterNames.updateProfiles(curProfiles);
+            recyclerViewFaces.setAdapter(adapterNames);
+
+        }else{
+            showName();
+            adapterFaces.updateProfiles(curProfiles);
+            recyclerViewFaces.setAdapter(adapterFaces);
         }
+        updateScore();
     }
 
     @Override
