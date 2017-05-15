@@ -34,8 +34,7 @@ highscore. Faces and names can be pulled from any profiles, not just the ones th
 
 # Design
 
-In this code, I decided not to use fragments because they would have added more complexity that wasn't necessary to improve the performance
-or architecture of this application.
+In this code, I decided not to use fragments because they would have added more complexity that wasn't necessary to improve the performance or architecture of this application for this particular design.
 
 The mode is indicated using an enumerator. When functions should behave differently depending on the mode, they use this enumerator to
 determine the mode and act appropriately.
@@ -47,9 +46,7 @@ the values are restored and the app updates the view.
 There are a number of dialogs telling the user about errors, showing loading indicators, telling them the score, asking for verification, or showing the correct answer.
 These are all created using static methods in DialogManager.
 
-For showing reverse views, I have two separate adapters for the RecyclerView. One shows images, one shows names. The adapter is changed
-depending on which type of question is being asked. In the info_layout, there is both an ImageView and a TextView. Depending on the type
-of question, one is visible and the other is not.
+For showing reverse questions, I have two separate adapters for the RecyclerView. One shows images, one shows names. The adapter is changed depending on which type of question is being asked. In the info_layout, there is both an ImageView and a TextView. Depending on the type of question, one is visible and the other is not.
 
 Picasso is used for loading in images and Volley for requesting the profiles.
 
